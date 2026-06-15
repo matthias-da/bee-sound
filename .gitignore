@@ -1,0 +1,87 @@
+# History files
+.Rhistory
+.Rapp.history
+
+# Session Data files
+.RData
+.RDataTmp
+
+# User-specific files
+.Ruserdata
+
+# Example code in package build process
+*-Ex.R
+
+# Output files from R CMD build
+/*.tar.gz
+
+# Output files from R CMD check
+/*.Rcheck/
+
+# RStudio files
+.Rproj.user/
+
+# produced vignettes
+vignettes/*.html
+vignettes/*.pdf
+
+# OAuth2 token, see https://github.com/hadley/httr/releases/tag/v0.3
+.httr-oauth
+
+# knitr and R markdown default cache directories
+*_cache/
+/cache/
+
+# Temporary files created by R markdown
+*.utf8.md
+*.knit.md
+
+# R Environment Variables
+.Renviron
+
+# pkgdown site
+docs/
+
+# translation temp files
+po/*~
+
+# RStudio Connect folder
+rsconnect/
+
+# ---------------------------------------------------------------------------
+# Third-party datasets — NOT ours to redistribute, and far exceed GitHub's
+# 100 MB/file limit. UrBAN is CC-BY (FRDR); MSPB is CC-BY-NC (Zenodo).
+# ---------------------------------------------------------------------------
+urban/
+mspb/
+
+# Copyrighted source papers and literature reviews
+papers/
+literature/
+z_Articles/
+
+# Development-only material — kept locally, not part of the public release
+planning/
+z_stuff/
+infographics/
+.claude/
+CLAUDE.md
+
+# Derived / binary analysis artifacts (regenerable from the scripts)
+analysis/output/
+*.rds
+*.wav
+
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.blg
+*.fls
+*.fdb_latexmk
+*.out
+*.synctex.gz
+*.toc
+*.log
+*.bcf
+*.run.xml
+*.spl
