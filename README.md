@@ -46,7 +46,7 @@ urban/UrBAN/ UrBAN dataset   (gitignored — upstream repo clone + FRDR data, se
 
 ## Software
 
-R ≥ 4.5 with: `tidyverse`, `lubridate`, `data.table`, `readxl`, `here`, `lme4`, `robustlmm`, `ranger`,
+R 4.5.2 (the version used for the published results) with: `tidyverse`, `lubridate`, `data.table`, `readxl`, `here`, `lme4`, `robustlmm`, `ranger`,
 and (for the UrBAN audio extraction, script 06) `tuneR`, `signal`. Install with:
 
 ```r
@@ -98,11 +98,17 @@ Scripts write to `analysis/output/`; later scripts read earlier outputs (`mspb_h
 | `08_icc_recompute.R` | like-for-like ICC of FoB (UrBAN 0.54 vs MSPB 0.30) |
 | `09_lmm_interpret.R` | interpretation of the hierarchical LMM (Table 2) |
 | `10_lmm_diagnostics.R` | LMM assumption checks (normality, heteroscedasticity, VIF, outliers, singularity) for the Table 2 models |
-| `11_review_analyses.R` | supplementary analyses (standardised Table 2 CIs, multicollinearity, best-subset audio, localisation diagnostics) |
+| `11_review_analyses.R` | supplementary analyses (standardised LMM CIs, multicollinearity, best-subset audio, localisation diagnostics) |
+| `12_revision_analyses.R` | predictor-block ablation with colony-cluster bootstrap CIs, paired incremental contributions and their `mtry` sensitivity, previous-visit box count, temporal/doubly-blocked CV, domain-shift diagnostics, split-conformal for both models, FoB saturation, and robustness to feature count / learner / averaging window |
 
-The MSPB results (Tables 1–3, 5; §3.5) and the ICC headline are reproducible from the directly
-downloadable MSPB and UrBAN inspection/sensor records. The cross-dataset transfer (Table 4) and the
-within-UrBAN audio CV additionally require the Globus-gated UrBAN raw audio (run 06 first).
+Script 12 reads only the derived tables (`mspb_harmonized.rds`, `urban_matched_table.rds`,
+`urban_harmonized.rds`), so it runs without re-touching the raw audio. It writes `revision_*.csv` plus a
+full numeric log at `analysis/output/revision_analyses.txt`. **Run 12 after 04** — both write
+`fig_mspb_conformal_transfer.png`, and the two-model version from 12 is the one the paper uses.
+
+The MSPB results and the ICC headline are reproducible from the directly downloadable MSPB and UrBAN
+inspection/sensor records. The cross-dataset transfer and the within-UrBAN audio CV additionally require
+the Globus-gated UrBAN raw audio (run 06 first).
 
 ## License
 

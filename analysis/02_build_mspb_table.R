@@ -135,13 +135,18 @@ saveRDS(list(pop = pop, sensor_daily = sensor_daily, mspb_tab = mspb_tab),
 theme_set(theme_minimal(base_size = 11))
 share_df <- pop %>% dplyr::filter(!is.na(share_bottom))
 share_n  <- share_df %>% dplyr::count(n_boxes)
+# Authored at final print size: this panel occupies 0.57\linewidth (~3.9 in) in the manuscript, so
+# ggsave() must use that width or the axis type prints at ~4 pt. Elsevier asks for >= 7 pt.
 p1 <- ggplot(share_df, aes(factor(n_boxes), share_bottom)) +
-  geom_boxplot(fill = "#0170B0", alpha = 0.30, colour = "grey30", outlier.size = 0.7) +
-  geom_text(data = share_n, aes(factor(n_boxes), 1.06, label = paste0("n=", n)),
-            inherit.aes = FALSE, size = 3, colour = "grey30") +
-  scale_y_continuous(labels = scales::percent, limits = c(0, 1.1)) +
-  labs(x = "number of boxes", y = "share in bottom brood box")
-ggsave(file.path(out_dir, "fig_mspb_share_bottom.png"), p1, width = 8, height = 5, dpi = 130)
+  geom_boxplot(fill = "#0170B0", alpha = 0.30, colour = "grey30", outlier.size = 0.6,
+               linewidth = 0.35) +
+  geom_text(data = share_n, aes(factor(n_boxes), 1.055, label = paste0("n=", n)),
+            inherit.aes = FALSE, size = 2.4, colour = "grey30") +
+  scale_y_continuous(labels = scales::percent, breaks = seq(0.25, 1, 0.25)) +
+  coord_cartesian(ylim = c(0.24, 1.09)) +
+  labs(x = "number of boxes", y = "share in bottom brood box") +
+  theme_minimal(base_size = 9)
+ggsave(file.path(out_dir, "fig_mspb_share_bottom.png"), p1, width = 3.9, height = 3.1, dpi = 400)
 
 p2 <- ggplot(pop, aes(date, fob_total, group = hive, colour = yard)) +
   geom_line(alpha = .4) +

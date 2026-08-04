@@ -66,8 +66,16 @@ for (nb in 2:3) {
 }
 
 ## ===== Refinement 2: conformal under transfer, firmed up =====
-rf_fit <- function(tr) ranger(reformulate(feat_all, "fob_total"), data = tr, num.trees = 300, seed = 1)
-q90    <- function(fit, cal) quantile(abs(cal$fob_total - predict(fit, cal)$predictions), .90, names = FALSE)
+rf_fit <- function(tr) ranger(reformulate(feat_all, "fob_total"), data = tr, num.trees = 500, seed = 1)
+# Finite-sample-valid split-conformal quantile: the ceil((n+1)(1-alpha))-th order statistic of the
+# calibration scores. The type-7 empirical quantile used previously targets only ~0.87 expected
+# coverage at the calibration sizes here, which would understate in-distribution calibration.
+conf_q <- function(scores, alpha = 0.10) {
+  s <- sort(scores[is.finite(scores)]); n <- length(s)
+  k <- ceiling((n + 1) * (1 - alpha))
+  if (k > n) Inf else s[k]
+}
+q90    <- function(fit, cal) conf_q(abs(cal$fob_total - predict(fit, cal)$predictions))
 cw     <- function(fit, q, te) { pr <- predict(fit, te)$predictions
                                  c(cov = mean(abs(te$fob_total - pr) <= q), width = 2 * q) }
 aps <- levels(d$yard)
