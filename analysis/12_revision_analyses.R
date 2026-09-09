@@ -740,6 +740,38 @@ cat(sprintf("MSPB modelling set: FoB range %.0f-%.0f, mean %.1f, sd %.2f, IQR %.
             min(d$fob_total), max(d$fob_total), mean(d$fob_total), sd(d$fob_total),
             quantile(d$fob_total, .25), quantile(d$fob_total, .75)))
 
+## =========================================================================
+## (K) bottom-vs-upper contrast: difference of the standardised coefficients
+##     in scale(hive_power) ~ scale(brood1) + scale(upper) + (1|hive), with a
+##     colony-cluster bootstrap CI on the DIFFERENCE (multi-box subset, as 05)
+## =========================================================================
+cat("\n\n=== (K) bottom-vs-upper coefficient difference, cluster-bootstrap CI ===\n")
+dk <- H$mspb_tab %>%
+  dplyr::filter(has_sensor, !is.na(fob_total), fob_total > 0, !is.na(n_boxes), !is.na(brood1)) %>%
+  dplyr::mutate(hive = factor(hive), upper = fob_total - brood1) %>%
+  dplyr::filter(n_boxes >= 2)
+fit_bu <- function(dat) {
+  m <- suppressWarnings(suppressMessages(
+    lme4::lmer(scale(hive_power) ~ scale(brood1) + scale(upper) + (1 | hive), dat,
+               REML = FALSE, control = lme4::lmerControl(calc.derivs = FALSE))))
+  b <- lme4::fixef(m); unname(b["scale(brood1)"] - b["scale(upper)"])
+}
+est_bu <- fit_bu(dk)
+set.seed(1)
+hv <- levels(droplevels(dk$hive))
+boot_bu <- replicate(2000, {
+  smp <- sample(hv, length(hv), replace = TRUE)
+  db <- dplyr::bind_rows(lapply(seq_along(smp), function(i)
+    dk[dk$hive == smp[i], , drop = FALSE] %>% dplyr::mutate(hive = paste0(smp[i], "_", i))))
+  tryCatch(fit_bu(db), error = function(e) NA_real_)
+})
+boot_bu <- boot_bu[is.finite(boot_bu)]
+ci_bu <- quantile(boot_bu, c(.025, .975), names = FALSE)
+cat(sprintf("beta_bottom - beta_upper = %.3f | 95%% colony-cluster bootstrap CI [%.3f, %.3f] (%d/2000 fits)\n",
+            est_bu, ci_bu[1], ci_bu[2], length(boot_bu)))
+readr::write_csv(tibble(estimate = est_bu, lo = ci_bu[1], hi = ci_bu[2], n_boot = length(boot_bu)),
+                 file.path(out_dir, "revision_bottom_upper_contrast.csv"))
+
 cat("\n\n=== done (12_revision_analyses) ===\n")
 sink()
 close(con)
