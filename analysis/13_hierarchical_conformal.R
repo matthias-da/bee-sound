@@ -15,7 +15,8 @@
 # Each colony contributes total weight 1/(K1+1) regardless of how many assessments it has.
 # With alpha = 0.10 the threshold is finite only if K1/(K1+1) >= 0.90, i.e. K1 >= 9 calibration
 # colonies. The splits of script 12 (20 % of ~27 colonies in-distribution, 30 % under transfer)
-# give K1 = 5 and 8, so the colony-level quantile is +inf there. We therefore (i) document that
+# give K1 = 5 in-distribution and K1 = 9 (Côté->Dubuc) or 8 (Dubuc->Côté) under transfer, so the
+# colony-level quantile is +inf in every setting except Côté->Dubuc. We therefore (i) document that
 # fact and (ii) re-run both the assessment-level rule and the colony-level rule on the SAME
 # enlarged splits (in-distribution 40/40/20 colonies, transfer 60/40), so the two rules are
 # compared on identical training and calibration data.
